@@ -9,36 +9,30 @@ app = Flask(__name__)
 api = Api(app)
 
 
-class Employees(Resource):
+class Masternodes(Resource):
     def get(self):
         conn = db_connect.connect() # connect to database
-        query = conn.execute("select * from employees") # This line performs query and returns json result
-        return {'employees': [i[0] for i in query.cursor.fetchall()]} # Fetches first column that is Employee ID
+        query = conn.execute("select * from masternodes") # This line performs query and returns json result
+        return {'masternodes': [i[0] for i in query.cursor.fetchall()]} # Fetches first column that is Employee ID
     
     def post(self):
         conn = db_connect.connect()
         print(request.json)
-        LastName = request.json['LastName']
-        FirstName = request.json['FirstName']
-        Title = request.json['Title']
-        ReportsTo = request.json['ReportsTo']
-        BirthDate = request.json['BirthDate']
-        HireDate = request.json['HireDate']
-        Address = request.json['Address']
-        City = request.json['City']
-        State = request.json['State']
-        Country = request.json['Country']
-        PostalCode = request.json['PostalCode']
-        Phone = request.json['Phone']
-        Fax = request.json['Fax']
-        Email = request.json['Email']
-        query = conn.execute("insert into employees values(null,'{0}','{1}','{2}','{3}', \
-                             '{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}', \
-                             '{13}')".format(LastName,FirstName,Title,
-                             ReportsTo, BirthDate, HireDate, Address,
-                             City, State, Country, PostalCode, Phone, Fax,
-                             Email))
+        ServiceID = request.json['ServiceID']
+        Coin = request.json['Coin']
+        IPaddress = request.json['IPaddress']
+        Status = request.json['ReportsTo']
+        query = conn.execute("insert into employees values(null,'{0}','{1}','{2}','{3}')".format(ServiceID,Coin,IPaddress,
+                             Status))
         return {'status':'success'}
+    def update(self):
+        conn = db_connect.connect()
+        print(request.json)# shitty code
+        MNID = request.json['MNID']
+        Change = request.json['Change']# Coin, IPaddress, Status..
+        ChangeTo = request.json['ChangeTo'] # what to change it to
+        query = conn.execute("update masternodes set json.loads{0} = 'json.loads{1}' WHERE ID {0}".format(MNID,Change,ChangeTo))
+        return {'status':'success'}    
 
     
 class Tracks(Resource):
@@ -57,7 +51,7 @@ class Employees_Name(Resource):
         return jsonify(result)
 
 
-api.add_resource(Employees, '/employees') # Route_1
+api.add_resource(Masternodes, '/masternodes') # Route_1
 api.add_resource(Tracks, '/tracks') # Route_2
 api.add_resource(Employees_Name, '/employees/<employee_id>') # Route_3
 
